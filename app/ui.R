@@ -1,5 +1,6 @@
 ## Define UI
 
+# Intro panel ----
 intro_panel <- tabPanel(
   "Intro",
   
@@ -11,29 +12,32 @@ intro_panel <- tabPanel(
   p(a(href = "https://www.kaggle.com/berkeleyearth/climate-change-earth-surface-temperature-data/version/2", "Link to Kaggle data"))
 )
 
+# Data panel ----
 second_panel <- tabPanel(
   "Data",
   
-  titlePanel("Climate Change is Real!"),
+  titlePanel("Average Temperature by Country"),
   
-  # Sidebar panel for inputs ----
-  sidebarPanel(
+  sidebarLayout(
+
+    sidebarPanel(
+      selectInput("country", "Country:", 
+                  unique(data$Country) %>% str_sort(),
+                  selected = "United States",
+                  multiple = TRUE),
+      
+      radioButtons("unit", "Unit of Measure:",
+                   c("Celsius", "Fahrenheit"))
+    ),
     
-    selectInput("country", "Country:", 
-                c("Germany" = "Germany",
-                  "U.S." = "United States",
-                  "U.K." = "United Kingdom")),
-    
-    checkboxInput("useFahren", "Use Fahrenheit")
-    
-  ),
-  
-  # Main panel for displaying outputs ----
-  mainPanel(
-    plotOutput('TempOverTime')
+    mainPanel(
+      plotOutput('TempOverTime')
+    )
   )
+  
 )
 
+# Overall UI ----
 ui <- navbarPage(
   "Navigator",
   intro_panel,

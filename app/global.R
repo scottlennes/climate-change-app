@@ -6,7 +6,9 @@ begin()
 
 setwd(dirname(rstudioapi::getActiveDocumentContext()[['path']]))
 
-library(lubridate)
+library(lubridate)   # for accessing day, month, year
+library(stringr)     # for sorting strings alphabetically 
+library(ggplot2)     # for pretty plotting
 library(shiny)
 
 # Load in data
