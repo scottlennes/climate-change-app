@@ -1,0 +1,5 @@
+*.RHistory
+*.RDS
+*.RData
+source.RData
+data/raw-data/*
