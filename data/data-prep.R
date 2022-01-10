@@ -4,20 +4,24 @@
 library(easyr)
 begin()
 
+library(data.table)
+
 setwd(dirname(rstudioapi::getActiveDocumentContext()[['path']]))
 
 # Read in data files
-data_read = read.csv('raw-data/GlobalLandTemperaturesByCountry.csv')
+files = list.files('raw-data')
+data_read = lapply(files, function(x) { fread(cc('raw-data/', x)) })
+names(data_read) = files
 
 # Work up data
-data = data_read %>%
+temp_by_country = data_read[["GlobalLandTemperaturesByCountry.csv"]] %>%
   select(Date = dt,
          TempCelsius = AverageTemperature,
          Country) %>%
   mutate(Date = todate(Date, min.acceptable = NA)) %>%
-  filter(year(Date) > 1800)
+  filter(year(Date) >= 1850)
 
-data %<>% mutate(TempFahren = (TempCelsius * 9 / 5) + 32)
+temp_by_country %<>% mutate(TempFahren = (TempCelsius * 9 / 5) + 32)
 
 # Save data
-save(data, file = '../app/data/source.RData')
+save(temp_by_country, file = '../app/data/source.RData')
