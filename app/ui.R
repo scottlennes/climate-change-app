@@ -16,15 +16,11 @@ intro_panel <- tabPanel(
 second_panel <- tabPanel(
   "Data",
   
-  titlePanel("Average Temperature by Country"),
+  titlePanel("Data"),
   
   sidebarLayout(
 
     sidebarPanel(
-      selectInput("country", "Country:", 
-                  unique(temp_by_country$Country) %>% str_sort(),
-                  selected = "United States",
-                  multiple = TRUE),
       
       selectInput("month", "Month:", 
                   month.name,
@@ -39,19 +35,36 @@ second_panel <- tabPanel(
                   sep = ""),
       
       radioButtons("unit", "Unit of Measure:",
-                   c("Celsius", "Fahrenheit"))
+                   c("Celsius", "Fahrenheit")),
+      
+      strong('FOR COUNTRY GRAPH ONLY:'),
+      
+      selectInput("country", "Countries:", 
+                  unique(temp_by_country$Country) %>% str_sort(),
+                  selected = "United States",
+                  multiple = TRUE),
+      
+      strong('FOR STATE GRAPH ONLY:'),
+      
+      selectInput("state", "States:", 
+                  unique(temp_by_state$State) %>% str_sort(),
+                  selected = "Illinois",
+                  multiple = TRUE),
     ),
     
     mainPanel(
-      plotOutput('CountryTempOverTime')
+      plotOutput('CountryTemp_plot', brush = 'country_plot_brush'),
+      dataTableOutput('CountryTemp_table'),
+      plotOutput('StateTemp')
     )
   )
   
 )
 
 # Overall UI ----
-ui <- navbarPage(
-  "Navigator",
-  intro_panel,
-  second_panel
-)
+ui <- fluidPage(
+  tabsetPanel(
+    intro_panel,
+    second_panel
+    )
+  )

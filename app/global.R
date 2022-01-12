@@ -10,6 +10,7 @@ library(lubridate)   # for accessing day, month, year
 library(stringr)     # for sorting strings alphabetically 
 library(ggplot2)     # for pretty plotting
 library(shiny)
+library(DT)          # for data tables
 
 # Load in data
 load('data/source.RData')
