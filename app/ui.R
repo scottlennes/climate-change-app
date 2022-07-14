@@ -55,7 +55,7 @@ second_panel <- tabPanel(
     mainPanel(
       plotOutput('CountryTemp_plot', brush = 'country_plot_brush'),
       dataTableOutput('CountryTemp_table'),
-      plotOutput('StateTemp')
+      uiOutput('StateTemp_plot')
     )
   )
   

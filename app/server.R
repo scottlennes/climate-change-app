@@ -8,7 +8,9 @@ server <- function(input, output) {
     idt = temp_by_country %>%
       filter(Country %in% input$country,
              month(Date, label = TRUE, abbr = FALSE) %in% input$month,
-             year(Date) >= input$years[1], year(Date) <= input$years[2])
+             year(Date) >= input$years[1], year(Date) <= input$years[2]) %>%
+      mutate(TempFahren = round(TempFahren, 2),
+             TempCelsius = round(TempCelsius, 2))
     
     idt$x = idt$Date
     
@@ -41,14 +43,30 @@ server <- function(input, output) {
     
     if(isTruthy(input$country_plot_brush)) idt = brushedPoints(idt, input$country_plot_brush)
     
-    idt %<>% select(Country, Date, TempCelsius, TempFahren)
+    idt %<>% 
+      select(Country, Date, TempCelsius, TempFahren) %>%
+      mutate(TempCelsius = format(TempCelsius, nsmall = 2),
+             TempFahren = format(TempFahren, nsmall = 2))
     
     datatable(idt, rownames = FALSE, options = list(pageLength = 5, searching = FALSE, lengthChange = FALSE))
     
   })
   
+  output$StateTemp_plot = renderUI({
+    
+    idt = StateTemp_data()
+    
+    ggplot(idt, aes(x = x, y = y, color = State)) +
+      geom_point(na.rm = TRUE) +
+      geom_smooth(method = "lm", formula = y ~ x, se = FALSE, na.rm = TRUE) +
+      labs(title = "Temperature by State", x = "Year", y = "Temperature") +
+      theme_light() +
+      theme(plot.title = element_text(face = 'bold', hjust = 0.5), legend.position = "bottom", legend.title = element_blank())
+    
+  })
+  
   # State temperature over time
-  output$StateTemp = renderPlot({
+  StateTemp_data = reactive({
     
     idt = temp_by_state %>%
       filter(State %in% input$state,
@@ -63,13 +81,7 @@ server <- function(input, output) {
       idt$y = idt$TempCelsius
     }
     
-    
-    ggplot(idt, aes(x = x, y = y, color = State)) +
-      geom_point(na.rm = TRUE) +
-      geom_smooth(method = "lm", formula = y ~ x, se = FALSE, na.rm = TRUE) +
-      labs(title = "Temperature by State", x = "Year", y = "Temperature") +
-      theme_light() +
-      theme(plot.title = element_text(face = 'bold', hjust = 0.5), legend.position = "bottom", legend.title = element_blank())
+    return(idt)
     
   })
   
